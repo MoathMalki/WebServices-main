@@ -2,10 +2,25 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import './App.css';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 const FOURSQUARE_API_KEY = "fsq3soZNlLbhRbl7blf3576+sKcYYa4YJt2/JO+WXGqcp/8=";
 const OPENCAGE_API_KEY = "92aec43ed55d40efb1fd4e8282e3c9ca";
 const DEFAULT_LOCATION = "Ramallah";
+
+function MapUpdater({ center }) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (center) {
+      map.setView(center, map.getZoom());
+    }
+  }, [center, map]);
+
+  return null;
+}
 
 function App() {
   const [places, setPlaces] = useState([]);
@@ -14,8 +29,8 @@ function App() {
   const [location, setLocation] = useState(DEFAULT_LOCATION);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [mapCenter, setMapCenter] = useState([31.9497, 35.2075]); 
 
-  // تحميل المفضلة من localStorage عند بدء التطبيق
   useEffect(() => {
     const savedFavorites = localStorage.getItem('favorites');
     if (savedFavorites) {
@@ -23,7 +38,6 @@ function App() {
     }
   }, []);
 
-  // حفظ المفضلة في localStorage عند التغيير
   useEffect(() => {
     localStorage.setItem('favorites', JSON.stringify(favorites));
   }, [favorites]);
@@ -61,6 +75,22 @@ function App() {
     }
   };
 
+  const fetchPlaceDetails = async (fsq_id) => {
+    try {
+      const response = await axios.get(
+        `https://api.foursquare.com/v3/places/${fsq_id}`,
+        {
+          headers: {
+            Authorization: FOURSQUARE_API_KEY,
+          },
+        }
+      );
+      return response.data;
+    } catch {
+      return {};
+    }
+  };
+
   const fetchPlaces = async () => {
     setLoading(true);
     setErrorMessage("");
@@ -70,6 +100,9 @@ function App() {
       setLoading(false);
       return;
     }
+
+    
+    setMapCenter([coords.lat, coords.lon]);
 
     try {
       const response = await axios.get(
@@ -86,14 +119,20 @@ function App() {
         }
       );
 
-      const resultsWithPhotos = await Promise.all(
+      const resultsWithDetails = await Promise.all(
         response.data.results.map(async (place) => {
           const photoUrl = await fetchPlacePhoto(place.fsq_id);
-          return { ...place, photo: photoUrl };
+          const details = await fetchPlaceDetails(place.fsq_id);
+
+          return {
+            ...place,
+            photo: photoUrl,
+            locationFormatted: details.location?.formatted_address || null,
+          };
         })
       );
 
-      setPlaces(resultsWithPhotos);
+      setPlaces(resultsWithDetails);
     } catch (error) {
       console.error("Error fetching places:", error);
       setErrorMessage("❌ Failed to fetch places.");
@@ -164,11 +203,34 @@ function App() {
                         <p className="category">
                           <strong>Category:</strong> {place.categories[0]?.name || "N/A"}
                         </p>
+                        {place.locationFormatted && (
+                          <p className="category"><strong>Address:</strong> {place.locationFormatted}</p>
+                        )}
                       </div>
                     </div>
                   ))}
                 </div>
               )}
+
+              {}
+              <MapContainer center={mapCenter} zoom={13} style={{ height: "400px", width: "100%" }}>
+                <MapUpdater center={mapCenter} />
+                <TileLayer
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                />
+                {places.map((place) => (
+                  <Marker
+                    key={place.fsq_id}
+                    position={[place.geocodes.main.latitude, place.geocodes.main.longitude]}
+                  >
+                    <Popup>
+                      <h3>{place.name}</h3>
+                      {place.locationFormatted && <p>{place.locationFormatted}</p>}
+                    </Popup>
+                  </Marker>
+                ))}
+              </MapContainer>
             </>
           } />
           
@@ -194,6 +256,9 @@ function App() {
                         <p className="category">
                           <strong>Category:</strong> {place.categories[0]?.name || "N/A"}
                         </p>
+                        {place.locationFormatted && (
+                          <p className="category"><strong>Address:</strong> {place.locationFormatted}</p>
+                        )}
                       </div>
                     </div>
                   ))}
