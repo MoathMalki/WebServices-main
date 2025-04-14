@@ -12,6 +12,7 @@ Foursquare Places API: Used to retrieve detailed information about places (name,
 
 OpenCage Geocoding API: Used to convert user-entered location names into geographic coordinates (latitude & longitude) that are then passed to Foursquare. https://opencagedata.com/api
 
+_______________________________________________________________________________________________________________________________
 
 ✨ Features
 🔍 Search Nearby Places:
@@ -28,6 +29,7 @@ View information such as place name, category, and formatted address.
 
 📱 Responsive Design:
 Works smoothly on both desktop and mobile devices
+__________________________________________________________________________________________________________________________
 
 🛠️ Technologies Used
 
