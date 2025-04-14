@@ -31,13 +31,18 @@ Works smoothly on both desktop and mobile devices
 
 🛠️ Technologies Used
 
-React Building the UI
+React Building the UI 
+
 React Router Handling navigation between Home and Favorites
+
 Axios Making API requests
+
 Leaflet + React-Leaflet	Displaying the interactive map
+
 Foursquare Places API Retrieving nearby places' data
+
 OpenCage Geocoding API Converting location names into coordinates
-Enjoy exploring your surroundings with our app! 🌍☕🍽️
+
+Enjoy exploring your surroundings with our app!
 
 
-Enjoy exploring nearby places!
