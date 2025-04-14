@@ -6,9 +6,11 @@
 - Ahmad Ewidat (1212596)
 
 🔍 Project Description
+
 This React web application helps users search for nearby places (cafés, restaurants, resorts, etc.) by using a combination of two APIs:
-Foursquare Places API: Used to retrieve detailed information about places (name, category, address, etc.).
-OpenCage Geocoding API: Used to convert user-entered location names into geographic coordinates (latitude & longitude) that are then passed to Foursquare.
+Foursquare Places API: Used to retrieve detailed information about places (name, category, address, etc.) https://docs.foursquare.com/developer/reference/place-search
+OpenCage Geocoding API: Used to convert user-entered location names into geographic coordinates (latitude & longitude) that are then passed to Foursquare. https://opencagedata.com/api
+
 
 ✨ Features
 🔍 Search Nearby Places:
