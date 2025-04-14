@@ -7,7 +7,7 @@
 
 ## 🔍 Description
 This React app consumes the [Foursquare Places API](https://developer.foursquare.com/) to search for nearby places (cafés, restaurants, resorts) based on user's current location or a default one.
-
+and https://opencagedata.com/api
 ## 🚀 How to Run
 1. Clone the repo.
 2. Run `npm install`
